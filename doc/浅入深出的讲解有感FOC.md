@@ -359,6 +359,7 @@ $$
 OK,到了这里，我们终于凑齐了公式，可以推导出T1 T2与Uq以及Ud的关系了。我在这里直接写答案
 $$
 T_1 = \frac{2\sqrt{3}}{3}\frac{|V\delta|}{U_{dc}}Tsin(60°-\alpha) = \sqrt{3}\frac{\sqrt{U_q^2+U_d^2}}{U_{dc}}Tsin(60°-\alpha) \\
+
 T_2 = \frac{2\sqrt{3}}{3}\frac{|V\delta|}{U_{dc}}Tsin(\alpha)=\sqrt{3}\frac{\sqrt{U_q^2+U_d^2}}{U_{dc}}Tsin(\alpha)  \\
 $$
 
