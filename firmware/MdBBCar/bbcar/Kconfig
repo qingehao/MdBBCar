@@ -1,0 +1,20 @@
+menu "MDBSP DRIVERS"
+
+    config MDBSP_USING_UART
+        bool "MDBSP_USING_UART"
+        default n
+
+    config MDBSP_USING_SPI
+        bool "MDBSP_USING_SPI"
+        default n
+
+    config MDBSP_USING_ADC
+        bool "MDBSP_USING_ADC"
+        default n
+
+    config MDBSP_USING_PWM
+        bool "MDBSP_USING_PWM"
+        default n
+
+endmenu
+

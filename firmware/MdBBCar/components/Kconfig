@@ -1,0 +1,15 @@
+menu "App Components"
+    config APP_USING_LWRB
+        bool "Enable LWRB"
+        default n
+
+    config APP_USING_LINK
+        bool "Enable LINK PROTOCOL X"
+        select APP_USING_LWRB
+        default y
+
+    config APP_USING_SIMPLEFOC
+        bool "Enable SIMPLEFOC"
+        default n
+endmenu
+

@@ -4,3 +4,6 @@ assets/
 sub_part/
 hardware/**/Project Logs for */
 hardware/**/Project Outputs for */
+hardware/**/History/
+hardware/**/__Previews/
+

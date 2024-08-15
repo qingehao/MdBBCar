@@ -1,0 +1,4 @@
+Record=TopLevelDocument|FileName=CarPower.SchDoc|SheetNumber=2
+Record=NoMainPathDocument|SourceDocument=CarPower.SchDoc|FileName=Connector.SchDoc|SheetNumber=3
+Record=NoMainPathDocument|SourceDocument=CarPower.SchDoc|FileName=GimbalFPV.SchDoc|SheetNumber=4
+Record=NoMainPathDocument|SourceDocument=CarPower.SchDoc|FileName=MaixCAMPort.SchDoc|SheetNumber=1

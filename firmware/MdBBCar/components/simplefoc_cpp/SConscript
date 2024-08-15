@@ -1,0 +1,27 @@
+import rtconfig
+from building import *
+import os
+
+cwd  = GetCurrentDir()
+path  = [cwd]
+# path += [cwd+"/common"]
+# path += [cwd+"/common/base_classes"]
+# path += [cwd+"/common/utils"]
+# path += [cwd+"/port"]
+
+src   = Glob('common/*.cpp')
+src  += Glob('common/base_classes/*.cpp')
+
+src  += Glob('current_sense/hardware_specific/*.cpp')
+src  += Glob('current_sense/*.cpp')
+
+src  += Glob('drivers/hardware_specific/*.cpp')
+src  += Glob('drivers/*.cpp')
+
+src  += Glob('sensors/*.cpp')
+
+src  += Glob('./*.cpp')
+
+group = DefineGroup('simplefoc', src, depend = ['APP_USING_SIMPLEFOC'], CPPPATH = path)
+
+Return('group')

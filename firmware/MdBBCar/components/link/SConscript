@@ -1,0 +1,11 @@
+import rtconfig
+from building import *
+import os
+
+cwd  = GetCurrentDir()
+path = [cwd]
+src  = Glob('*.c')
+src  += Glob('protocol/*.c')
+group = DefineGroup('link', src, depend = ['APP_USING_LINK'], CPPPATH = path)
+
+Return('group')

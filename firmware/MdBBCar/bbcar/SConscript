@@ -1,0 +1,35 @@
+import rtconfig
+from building import *
+import os
+
+cwd  = GetCurrentDir()
+path = [cwd]
+path += [cwd+"/bsp"]
+path += [cwd+"/app"]
+
+src  = Glob('app/*.c')
+
+if GetDepend(['MDBSP_USING_SPI']):
+    src += ['bsp/bsp_spi.c']
+
+if GetDepend(['MDBSP_USING_UART']):
+    src += ['bsp/bsp_uart.c']
+
+src += ['bsp/bsp_pwm.c']
+
+src  += Glob('bsp/drv_ma732.c')
+src  += Glob('bsp/drv_as5048.c')
+src  += Glob('bsp/bsp_foc.c')
+src  += Glob('bsp/bsp_tick.c')
+src  += Glob('bsp/bsp_mem.c')
+src  += Glob('bsp/drv_mpu6500.c')
+src  += Glob('bsp/bsp_encoder.c')
+
+group = DefineGroup('bbcar', src, depend = [''], CPPPATH = path)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

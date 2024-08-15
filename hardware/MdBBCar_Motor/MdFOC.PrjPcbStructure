@@ -1,0 +1,5 @@
+Record=TopLevelDocument|FileName=MCU_A.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=MCU_A.SchDoc|FileName=MCU_B.SchDoc|SheetNumber=2
+Record=NoMainPathDocument|SourceDocument=MCU_A.SchDoc|FileName=Motor.SchDoc|SheetNumber=3
+Record=NoMainPathDocument|SourceDocument=MCU_A.SchDoc|FileName=Peripheral.SchDoc|SheetNumber=5
+Record=NoMainPathDocument|SourceDocument=MCU_A.SchDoc|FileName=Power.SchDoc|SheetNumber=4
