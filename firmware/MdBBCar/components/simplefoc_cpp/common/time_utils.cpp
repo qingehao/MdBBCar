@@ -32,8 +32,8 @@ unsigned long _micros(){
     else return (micros());
 #else
   // regular micros
-  return bsp_tick_get_us();
-  // return board_get_cur_us();
+  // return (uint32_t)bsp_tick_get_us();
+  return board_get_cur_us();
   // return (unsigned long)bsp_foc_cur_us();
   // return micros();
 #endif

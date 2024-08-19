@@ -8,10 +8,6 @@
 extern "C" {
 #endif
 
-#define BSP_TICK_TIMER_INDEX 4
-#define BSP_TICK_IRQn TIM4_IRQn
-#define BSP_TICK_IRQ_HANDLER
-
 typedef struct
 {
     uint8_t     timer_index;

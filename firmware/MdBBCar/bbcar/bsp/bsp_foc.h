@@ -2,15 +2,13 @@
 #define __BSP_FOC_H__
 
 #include "stdint.h"
+#include "board_bsp_config.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "stm32h7xx.h"
-
-#define BSP_FOC_MOTOR_NUM  3
-#define BSP_FOC_ADC_CH_NUM 7
 
 #ifndef BSP_FOC_MOTOR_NUM
     #warning "need define BSP_FOC_MOTOR_NUM"

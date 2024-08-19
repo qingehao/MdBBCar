@@ -34,26 +34,16 @@
 
 #include "SimpleFOC.h"
 
-MagneticSensorSPI sensor = MagneticSensorSPI(1, GET_PIN(D, 10), 14, 0x3fff);
-
-// BLDC motor & driver instance
-// BLDCMotor motor = BLDCMotor(pole pair number);
-BLDCMotor motor = BLDCMotor(7);
-// BLDCDriver3PWM driver = BLDCDriver3PWM(pwmA, pwmB, pwmC, Enable(optional));
-BLDCDriver3PWM driver = BLDCDriver3PWM(32, 33, 25, GET_PIN(A, 4));
-float target_velocity = 0;
-
-static void foc_loop(void *arg)
-{
-    while(1)
-    {
-        rt_thread_mdelay(1);
-        motor.loopFOC();
-        motor.move(target_velocity);
-    }
-}
-
 #define LED1_PIN    GET_PIN(E, 4)
+
+// 16384 2097152
+MagneticSensorSPI SensorL = MagneticSensorSPI(1, 2097152);
+
+BLDCDriver3PWM DriverL = BLDCDriver3PWM(1, GET_PIN(A, 4));
+BLDCMotor MotorL = BLDCMotor(7);
+
+
+float target_velocity = 0;
 
 volatile uint32_t dd_foc_is_init = 0;
 
@@ -62,8 +52,8 @@ static void dd_foc_cb(void *arg)
     if (dd_foc_is_init)
     {
         rt_pin_write(LED1_PIN, 1);
-        motor.loopFOC();
-        motor.move(target_velocity);
+        MotorL.loopFOC();
+        MotorL.move(target_velocity);
         rt_pin_write(LED1_PIN, 0);
     }
 }
@@ -71,46 +61,42 @@ static void dd_foc_cb(void *arg)
 void simplefoc_test()
 {
     dd_foc_is_init = 0;
-    // bsp_pwm_init();
 
-    bsp_foc_init();
+    bsp_encoder_init(); // 编码器初始化
+    bsp_foc_init();     // pwm adc初始化
+
     bsp_foc_t *bsp_foc = bsp_foc_request();
-    bsp_foc_set_callback(bsp_foc, dd_foc_cb, bsp_foc);
-    bsp_foc_start(bsp_foc);
+    bsp_foc_set_callback(bsp_foc, dd_foc_cb, bsp_foc); // 设置ADC采样完成回调函数
+    bsp_foc_start(bsp_foc); // // ADC开始采样
 
-    sensor.min_elapsed_time = 0.0005;
-    sensor.sensor_update_freq = 10000;
-    sensor.init();
-    motor.linkSensor(&sensor);
+    SensorL.min_elapsed_time = 0.0005;
+    SensorL.sensor_update_freq = 10000;
+    SensorL.init();
+    MotorL.linkSensor(&SensorL);
 
-    driver.voltage_power_supply = 8.4;
-    // limit the maximal dc voltage the driver can set
-    // as a protection measure for the low-resistance motors
-    // this value is fixed on startup
-    driver.voltage_limit = 8.4;
-    driver.init();
-    motor.linkDriver(&driver);
+    DriverL.voltage_power_supply = 8.4; // 设置供电电压
+    DriverL.voltage_limit = 8.4;        // 设置电压限制
+    DriverL.init();
+    MotorL.linkDriver(&DriverL);
 
-    motor.controller = MotionControlType::velocity; // velocity angle
-    // velocity PI controller parameters
+    MotorL.controller = MotionControlType::velocity; // velocity angle
+    MotorL.voltage_limit = 8.4;   // [V]
+    MotorL.foc_modulation = FOCModulationType::SpaceVectorPWM;
+    MotorL.voltage_sensor_align = 1; // 校准使用的电压
+
+    // 速度环 PID
     // 2808 P:0.04 I:0.21 D:0
-    motor.PID_velocity.P = 0.04;
-    motor.PID_velocity.I = 0.21;
-    motor.PID_velocity.D = 0;
+    MotorL.PID_velocity.P = 0.04;
+    MotorL.PID_velocity.I = 0.21;
+    MotorL.PID_velocity.D = 0;
+    MotorL.PID_velocity.output_ramp = 1000; // 输出斜坡
 
-    motor.voltage_limit = 8.4;   // [V]
-    motor.PID_velocity.output_ramp = 1000;
+    // 速度 LPF
+    MotorL.LPF_velocity.Tf = 0.01f;
 
-    motor.LPF_velocity.Tf = 0.01f;
-    motor.foc_modulation = FOCModulationType::SpaceVectorPWM;
-    motor.P_angle.P = 2;
-
-    motor.voltage_sensor_align = 1;
-    motor.init();
-    // align sensor and start FOC
-    motor.initFOC();
-    // rt_thread_t tid = rt_thread_create("foc", foc_loop, NULL, 1024, 1, 10);
-    // rt_thread_startup(tid);
+    MotorL.P_angle.P = 2;
+    MotorL.init();
+    MotorL.initFOC();
     dd_foc_is_init = 1;
 }
 
@@ -125,11 +111,10 @@ extern "C" int main(void)
     rt_pin_write(LED1_PIN, 0);
     bsp_uart_init();
 
-    // bsp_pwm_init();
-    // simplefoc_test();
+    simplefoc_test();
     // bsp_tick_test(LED1_PIN);
 
-    imu_6500_test(LED1_PIN);
+    // imu_6500_test(LED1_PIN);
     // bsp_pwm_test();
     // bsp_foc_test();
 

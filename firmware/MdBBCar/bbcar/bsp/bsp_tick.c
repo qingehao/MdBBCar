@@ -2,20 +2,7 @@
 #include "stm32h7xx.h"
 #include "rtthread.h"
 #include "drv_gpio.h"
-
-// typedef struct
-// {
-//     uint8_t     timer_index;
-//     uint32_t    timer_cnt_freq;
-//     uint32_t    timer_irq_freq;
-// } bsp_tick_config_t;
-
-#define BSP_TICK_CONFIG \
-{ \
-    .timer_index = BSP_TICK_TIMER_INDEX, \
-    .timer_cnt_freq = 10000000, \
-    .timer_irq_freq = 8000, \
-}
+#include "board_bsp_config.h"
 
 typedef struct
 {
@@ -141,8 +128,7 @@ void bsp_tick_delay_ms(uint32_t ms)
     bsp_tick_delay_us(ms*1000);
 }
 
-#if BSP_TICK_TIMER_INDEX == 4
-void TIM4_IRQHandler(void)
+void BSP_TICK_IRQ_HANDLER(void)
 {
     uint32_t itsource = bsp_tick.htim.Instance->DIER;
     uint32_t itflag   = bsp_tick.htim.Instance->SR;
@@ -164,7 +150,6 @@ void TIM4_IRQHandler(void)
     }
     rt_interrupt_leave();
 }
-#endif
 
 /* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
 static void stm32_tim_pclkx_doubler_get(uint32_t *pclk1_doubler, uint32_t *pclk2_doubler)

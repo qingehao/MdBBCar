@@ -1,4 +1,5 @@
 #include "bsp_spi.h"
+#include "board_bsp_config.h"
 #include "stm32h7xx.h"
 #include "rtthread.h"
 #include "string.h"
@@ -11,38 +12,6 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 #endif
-
-// encoder
-
-#define MD_BSP_SPI1_CONFIG \
-{ \
-    .rb_item_num=32, .spi_mode=1, .psc=8, .dma_en=0, \
-    .dma_config = { \
-        .tx_dma_instance=DMA1_Stream3, .rx_dma_instance=DMA1_Stream2, \
-        .tx_irq_en=0,                  .rx_irq_en=1, \
-        .tx_irqn=DMA1_Stream3_IRQn,    .rx_irqn=DMA1_Stream2_IRQn, \
-        .tx_irq_prio=(1<<8|0),         .rx_irq_prio=(1<<8|0), \
-    } \
-}
-#define MD_BSP_SPI1_DMA_TX_IRQHandler DMA1_Stream3_IRQHandler
-#define MD_BSP_SPI1_DMA_RX_IRQHandler DMA1_Stream2_IRQHandler
-
-// SPI2_RX    DMA1_Stream4   IMU
-// SPI2_TX    DMA1_Stream5
-
-#define MD_BSP_SPI2_CONFIG \
-{ \
-    .rb_item_num=8, .spi_mode=3, .psc=256, .dma_en=BSP_SPI_TX_DMA_EN|BSP_SPI_RX_DMA_EN, \
-    .dma_config = { \
-        .tx_dma_instance=DMA1_Stream5, .rx_dma_instance=DMA1_Stream4, \
-        .tx_irq_en=1,                  .rx_irq_en=1, \
-        .tx_irqn=DMA1_Stream5_IRQn,    .rx_irqn=DMA1_Stream4_IRQn, \
-        .tx_irq_prio=(1<<8|0),         .rx_irq_prio=(1<<8|0), \
-    } \
-}
-#define MD_BSP_SPI2_DMA_TX_IRQHandler DMA1_Stream5_IRQHandler
-#define MD_BSP_SPI2_DMA_RX_IRQHandler DMA1_Stream4_IRQHandler
-
 
 static SPI_TypeDef *SPI_INSTANCE[] = {SPI1, SPI2, SPI3, SPI4, SPI5, SPI6};
 

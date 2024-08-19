@@ -1,23 +1,20 @@
 
 #include "MagneticSensorSPI.h"
-#include "bsp_spi.h"
-#include "drv_gpio.h"
-#include "drv_ma732.h"
+#include "bsp_encoder.h"
 
-MagneticSensorSPI::MagneticSensorSPI(uint8_t spi_index, int cs_pin, int bit_resolution, int angle_register)
+MagneticSensorSPI::MagneticSensorSPI(uint8_t sensor_index, uint32_t cpr)
 {
-    this->spi_index = spi_index;
-    this->cs_pin = cs_pin;
-
+    this->sensor_index = sensor_index;
+    this->cpr = cpr;
     // this->send_buf[0] = (uint8_t)((angle_register&0x00003f00)>>8);
     // this->send_buf[1] = (uint8_t)(angle_register&0x000000ff);
 
-    this->send_buf[0] = 0xA0;
-    this->send_buf[1] = 0x03;
-    this->send_buf[2] = 0xff;
-    this->send_buf[3] = 0xff;
-    this->send_buf[4] = 0xff;
-    this->send_buf[5] = 0xff;
+    // this->send_buf[0] = 0xA0;
+    // this->send_buf[1] = 0x03;
+    // this->send_buf[2] = 0xff;
+    // this->send_buf[3] = 0xff;
+    // this->send_buf[4] = 0xff;
+    // this->send_buf[5] = 0xff;
 }
 
 void MagneticSensorSPI::init()
@@ -25,20 +22,20 @@ void MagneticSensorSPI::init()
     // spi_dev = bsp_spi_request(spi_index);
     // rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
     // rt_pin_write(cs_pin, 1);
-    bsp_encoder_init();
+    // bsp_encoder_init();
     this->Sensor::init(); // call base class init
 }
 
 void MagneticSensorSPI::_spi_transfer_setup(void *arg)
 {
     MagneticSensorSPI *mag = (MagneticSensorSPI *)arg;
-    rt_pin_write(mag->cs_pin, 0);
+    // rt_pin_write(mag->cs_pin, 0);
 }
 
 void MagneticSensorSPI::_spi_transfer_finish(void *arg)
 {
     MagneticSensorSPI *mag = (MagneticSensorSPI *)arg;
-    rt_pin_write(mag->cs_pin, 1);
+    // rt_pin_write(mag->cs_pin, 1);
 }
 
 //  Shaft angle calculation
@@ -81,8 +78,8 @@ float MagneticSensorSPI::getSensorAngle()
 
     /* MT6835 */
 
-    uint32_t reg_val = bsp_encoder_read(0);
-    angle = (reg_val / (float)16384) * 6.28318530718f;
+    uint32_t reg_val = bsp_encoder_read(this->sensor_index);
+    angle = (reg_val / (float)this->cpr) * 6.28318530718f;
 
     return angle;
 }

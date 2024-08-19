@@ -3,52 +3,6 @@
 #include "bsp_tick.h"
 #include "bsp_mem.h"
 
-#define BSP_FOC_CONFIG \
-{ \
-    .pwm_config[0] = { \
-        .timer_index = 1, \
-        .phaseA_ch = 1, \
-        .phaseB_ch = 2, \
-        .phaseC_ch = 3, \
-        .complementary_en = 1, \
-        .freq = 20000, \
-    }, \
-    .pwm_config[1] = { \
-        .timer_index = 8, \
-        .phaseA_ch = 1, \
-        .phaseB_ch = 2, \
-        .phaseC_ch = 3, \
-        .complementary_en = 1, \
-        .freq = 20000, \
-    }, \
-    .pwm_config[2] = { \
-        .timer_index = 2, \
-        .phaseA_ch = 1, \
-        .phaseB_ch = 2, \
-        .phaseC_ch = 3, \
-        .complementary_en = 0, \
-        .freq = 20000, \
-    }, \
-    .adc_config = {  \
-        .adc_index = 1, \
-        .adc_ch_num = BSP_FOC_ADC_CH_NUM, \
-        .adc_ch_array  = {5, 9, 4, 8, 7, 10, 11}, \
-        .motor = { \
-            { \
-                .iAch_idx = 0, \
-                .iBch_idx = 1, \
-                .iCch_idx = BSP_FOC_ADC_CH_NOUSE, \
-            }, \
-            { \
-                .iAch_idx = 0, \
-                .iBch_idx = 1, \
-                .iCch_idx = BSP_FOC_ADC_CH_NOUSE, \
-            }, \
-        }, \
-    }, \
-    .trigger_ch = 1<<4|4, \
-}
-
 static bsp_foc_config_t foc_config = BSP_FOC_CONFIG;
 static bsp_foc_t g_bsp_foc;
 

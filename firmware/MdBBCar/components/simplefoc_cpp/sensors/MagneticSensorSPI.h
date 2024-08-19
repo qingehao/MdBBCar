@@ -10,13 +10,7 @@
 class MagneticSensorSPI: public Sensor
 {
  public:
-    /**
-     *  MagneticSensorSPI class constructor
-     * @param cs  SPI chip select pin
-     * @param bit_resolution   sensor resolution bit number
-     * @param angle_register  (optional) angle read register - default 0x3FFF
-     */
-    MagneticSensorSPI(uint8_t spi_index, int cs_pin, int bit_resolution, int angle_register);
+    MagneticSensorSPI(uint8_t sensor_index, uint32_t cpr);
 
     void init();
 
@@ -24,8 +18,7 @@ class MagneticSensorSPI: public Sensor
     /** get current angle (rad) */
     float getSensorAngle() override;
 
-    int cs_pin;
-    int spi_index;
+    uint8_t sensor_index;
     bsp_spi_dev_t *spi_dev;
 
   private:

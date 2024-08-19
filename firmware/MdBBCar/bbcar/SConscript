@@ -24,6 +24,7 @@ src  += Glob('bsp/bsp_tick.c')
 src  += Glob('bsp/bsp_mem.c')
 src  += Glob('bsp/drv_mpu6500.c')
 src  += Glob('bsp/bsp_encoder.c')
+src  += Glob('bsp/drv_mt6835.c')
 
 group = DefineGroup('bbcar', src, depend = [''], CPPPATH = path)
 
