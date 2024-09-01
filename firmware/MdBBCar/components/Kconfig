@@ -8,6 +8,10 @@ menu "App Components"
         select APP_USING_LWRB
         default y
 
+    config APP_USING_MOTOR
+        bool "Enable MOTOR"
+        default n
+
     config APP_USING_SIMPLEFOC
         bool "Enable SIMPLEFOC"
         default n

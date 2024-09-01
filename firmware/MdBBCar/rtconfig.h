@@ -298,7 +298,7 @@
 
 #define APP_USING_LWRB
 #define APP_USING_LINK
-#define APP_USING_SIMPLEFOC
+#define APP_USING_MOTOR
 
 /* MDBSP DRIVERS */
 

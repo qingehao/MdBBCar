@@ -12,7 +12,7 @@
 #include <drv_gpio.h>
 #include "bbcar.h"
 #include "arm_math.h"
-
+#include "rtconfig.h"
 /* defined the LED1 pin: PC13 */
 
 #define BEEP_PIN    GET_PIN(C, 9)
@@ -31,17 +31,15 @@
  *  SPI6_TX    DMA2_Stream1
  *  ADC        DMA2_Stream2   FPV_IMU
  */
-
-#include "SimpleFOC.h"
-
 #define LED1_PIN    GET_PIN(E, 4)
 
+#ifdef APP_USING_SIMPLEFOC
+#include "SimpleFOC.h"
 // 16384 2097152
 MagneticSensorSPI SensorL = MagneticSensorSPI(1, 2097152);
 
 BLDCDriver3PWM DriverL = BLDCDriver3PWM(1, GET_PIN(A, 4));
 BLDCMotor MotorL = BLDCMotor(7);
-
 
 float target_velocity = 0;
 
@@ -99,6 +97,7 @@ void simplefoc_test()
     MotorL.initFOC();
     dd_foc_is_init = 1;
 }
+#endif
 
 extern "C" int main(void)
 {
@@ -111,12 +110,9 @@ extern "C" int main(void)
     rt_pin_write(LED1_PIN, 0);
     bsp_uart_init();
 
+#ifdef APP_USING_SIMPLEFOC
     simplefoc_test();
-    // bsp_tick_test(LED1_PIN);
-
-    // imu_6500_test(LED1_PIN);
-    // bsp_pwm_test();
-    // bsp_foc_test();
+#endif
 
     while (count++)
     {

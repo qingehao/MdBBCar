@@ -1,0 +1,22 @@
+import rtconfig
+from building import *
+import os
+
+cwd  = GetCurrentDir()
+path = [cwd]
+path += [cwd + '/application']
+path += [cwd + '/config']
+path += [cwd + '/control_fun']
+path += [cwd + '/control_sys']
+path += [cwd + '/math']
+
+src  = Glob('*.c')
+src  += Glob('application/*.c')
+src  += Glob('config/*.c')
+src  += Glob('control_fun/*.c')
+src  += Glob('control_sys/*.c')
+src  += Glob('math/*.c')
+
+group = DefineGroup('motor', src, depend = ['APP_USING_MOTOR'], CPPPATH = path)
+
+Return('group')

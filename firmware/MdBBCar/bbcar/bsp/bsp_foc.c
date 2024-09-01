@@ -294,11 +294,12 @@ void bsp_foc_init()
 {
     _foc_pwm_init(&g_bsp_foc);
     _foc_adc_init(&g_bsp_foc);
+    g_bsp_foc.is_init = 1;
 }
 
-void bsp_foc_start(bsp_foc_t *bsp_foc)
+void bsp_foc_start()
 {
-    bsp_foc_pwm_t *foc_pwm  = &(bsp_foc->foc_pwm[bsp_foc->adc_trigger_source_idx]);
+    bsp_foc_pwm_t *foc_pwm  = &(g_bsp_foc.foc_pwm[g_bsp_foc.adc_trigger_source_idx]);
     HAL_TIM_PWM_Start(&foc_pwm->htim, foc_pwm->chTrigger);
 }
 
@@ -308,9 +309,9 @@ void bsp_foc_stop(bsp_foc_t *bsp_foc)
     HAL_TIM_PWM_Stop(&foc_pwm->htim, foc_pwm->chTrigger);
 }
 
-void bsp_foc_pwm_enable(bsp_foc_t *bsp_foc, uint8_t motor_id, uint8_t en)
+void bsp_foc_pwm_enable(uint8_t motor_id, uint8_t en)
 {
-    bsp_foc_pwm_t *foc_pwm  = &(bsp_foc->foc_pwm[motor_id]);
+    bsp_foc_pwm_t *foc_pwm  = &(g_bsp_foc.foc_pwm[motor_id]);
 
     if (en)
     {
@@ -338,15 +339,15 @@ void bsp_foc_pwm_enable(bsp_foc_t *bsp_foc, uint8_t motor_id, uint8_t en)
     }
 }
 
-void bsp_foc_set_callback(bsp_foc_t *bsp_foc, void (*cb)(void *arg), void *arg)
+void bsp_foc_set_callback(void (*cb)(void *arg, uint8_t *adc_data), void *arg)
 {
-    bsp_foc->cb = cb;
-    bsp_foc->cb_arg = arg;
+    g_bsp_foc.cb = cb;
+    g_bsp_foc.cb_arg = arg;
 }
 
-void bsp_foc_set_pwm(bsp_foc_t *bsp_foc, uint8_t motor_id, float dutyA, float dutyB, float dutyC)
+void bsp_foc_set_pwm(uint8_t motor_id, float dutyA, float dutyB, float dutyC)
 {
-    bsp_foc_pwm_t *foc_pwm  = &(bsp_foc->foc_pwm[motor_id]);
+    bsp_foc_pwm_t *foc_pwm  = &(g_bsp_foc.foc_pwm[motor_id]);
 
     uint32_t pluseA = foc_pwm->period_cnt * dutyA - 1;
     uint32_t pluseB = foc_pwm->period_cnt * dutyB - 1;
@@ -355,6 +356,15 @@ void bsp_foc_set_pwm(bsp_foc_t *bsp_foc, uint8_t motor_id, float dutyA, float du
     __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chA, pluseA);
     __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chB, pluseB);
     __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chC, pluseC);
+}
+
+void bsp_foc_set_width(uint8_t motor_id, uint32_t ta, uint32_t tb, uint32_t tc)
+{
+    bsp_foc_pwm_t *foc_pwm  = &(g_bsp_foc.foc_pwm[motor_id]);
+
+    __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chA, ta);
+    __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chB, ta);
+    __HAL_TIM_SET_COMPARE(&foc_pwm->htim, foc_pwm->chC, tc);
 }
 
 static volatile uint32_t foc_time_us = 0;
@@ -373,7 +383,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     foc_time_us += 10;
     if (g_bsp_foc.cb)
     {
-        g_bsp_foc.cb(g_bsp_foc.cb_arg);
+        g_bsp_foc.cb(g_bsp_foc.cb_arg, (uint8_t *)g_bsp_foc.foc_adc.adc_buffer);
     }
     rt_interrupt_leave();
 }
@@ -398,7 +408,7 @@ void DMA2_Stream2_IRQHandler()
 
 volatile uint32_t dd_cnt =  0;
 
-static void dd_foc_cb(void *arg)
+static void dd_foc_cb(void *arg, uint8_t *data)
 {
     dd_cnt++;
 }
@@ -407,10 +417,10 @@ void bsp_foc_test()
 {
     bsp_foc_init();
     bsp_foc_t *bsp_foc = bsp_foc_request();
-    bsp_foc_set_callback(bsp_foc, dd_foc_cb, bsp_foc);
+    bsp_foc_set_callback(dd_foc_cb, bsp_foc);
 
-    bsp_foc_pwm_enable(bsp_foc, 0, 1);
+    bsp_foc_pwm_enable(0, 1);
 
-    bsp_foc_start(bsp_foc);
-    bsp_foc_set_pwm(bsp_foc, 0, 0.2, 0.5, 0.7);
+    bsp_foc_start();
+    bsp_foc_set_pwm(0, 0.2, 0.5, 0.7);
 }

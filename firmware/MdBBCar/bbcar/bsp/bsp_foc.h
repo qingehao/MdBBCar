@@ -80,8 +80,10 @@ typedef struct
     uint8_t adc_trigger_source_idx;
 
     // uint16_t adc_buffer[BSP_FOC_ADC_CH_NUM];
-    void (*cb)(void *arg);
+    void (*cb)(void *arg, uint8_t *adc_data);
     void *cb_arg;
+
+    uint8_t is_init;
 } bsp_foc_t;
 
 /**
@@ -99,7 +101,7 @@ bsp_foc_t *bsp_foc_request();
 /**
  * @brief foc开始 开始ADC采样
  */
-void bsp_foc_start(bsp_foc_t *bsp_foc);
+void bsp_foc_start();
 
 /**
  * @brief foc停止 停止ADC采样
@@ -109,21 +111,19 @@ void bsp_foc_stop(bsp_foc_t *bsp_foc);
 /**
  * @brief
  *
- * @param bsp_foc   foc句柄
  * @param motor_id  电机id
  * @param en        0 -- 失能
  *                  1 -- 使能
  */
-void bsp_foc_pwm_enable(bsp_foc_t *bsp_foc, uint8_t motor_id, uint8_t en);
+void bsp_foc_pwm_enable(uint8_t motor_id, uint8_t en);
 
 /**
  * @brief 设置foc adc采样完成回调函数
  *
- * @param bsp_foc foc句柄
  * @param cb      采样完成回调函数
  * @param arg     参数
  */
-void bsp_foc_set_callback(bsp_foc_t *bsp_foc, void (*cb)(void *arg), void *arg);
+void bsp_foc_set_callback(void (*cb)(void *arg, uint8_t *adc_data), void *arg);
 
 /**
  * @brief 设置电机PWM占空比
@@ -134,7 +134,17 @@ void bsp_foc_set_callback(bsp_foc_t *bsp_foc, void (*cb)(void *arg), void *arg);
  * @param dutyB    B相占空比
  * @param dutyC    C相占空比
  */
-void bsp_foc_set_pwm(bsp_foc_t *bsp_foc, uint8_t motor_id, float dutyA, float dutyB, float dutyC);
+void bsp_foc_set_pwm(uint8_t motor_id, float dutyA, float dutyB, float dutyC);
+
+/**
+ * @brief 设置电机的PWM开启时间
+ *
+ * @param motor_id 电机id
+ * @param ta       A相开启时间
+ * @param tb       B相开启时间
+ * @param tc       C相开启时间
+ */
+void bsp_foc_set_width(uint8_t motor_id, uint32_t ta, uint32_t tb, uint32_t tc);
 
 /**
  * @brief 获得当前us时间戳
