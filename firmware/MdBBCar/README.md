@@ -27,11 +27,11 @@ env 是 RT-Thread 推出的开发辅助工具，针对基于 RT-Thread 操作系
 
 使用 VSCODE打开 firmware/MdBBCar 目录，在RT-Thread Cmd中使用scons命令即可编译
 
-![image-20240901173640598](E:\freetime_works\MdBBCar\firmware\MdBBCar\figure\编译说明.png)
+![编译说明](figure\编译说明.png)
 
 #### OZONE下载调试
 
-编译产物为firmware/MdBBCar/rt-thread.elf 
+编译产物为firmware/MdBBCar/rt-thread.elf
 
 ### 进阶使用
 
